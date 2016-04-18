@@ -1,0 +1,119 @@
+
+<!doctype html>
+<html lang="fr">
+	<head>
+	    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+	    <title>Fonction Magic Inc / Dec</title>
+	    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"></link>
+	    <script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="panel panel-default">
+					<div style="text-align: left;" class="panel-body col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 col-xs-12">
+						<h2>Magic Increment</h1>
+						<form >
+							<div class="form-group">
+						    	<label for="inputField">Input value</label>
+						    	<input style="width: 220px;"type="text" class="form-control" id="inputField" placeholder="Please enter a numeric value">
+  							</div>
+							<div class="form-group">
+								<label for="mode">Mode</label>
+								<div class="radio">
+									<label><input type="radio" id="mode" name="mode" checked="checked">Incremental</label>
+								</div>
+								<div class="radio">
+									<label><input type="radio" name="mode">Decremental</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="scriptType">Script</label>
+								<div class="radio">
+									<label><input type="radio" id="scriptType" name="scriptType">JS</label>
+								</div>
+								<div class="radio">
+									<label><input type="radio" name="scriptType" checked="checked">PHP</label>
+								</div>
+							</div>
+						</form>
+						<button id="submitButton" class="btn btn-default">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+
+			(function(){
+
+				// Action du bouton OK
+				$("#submitButton").click(function(){
+					main($("#inputField").val(), !$("#mode").is(':checked'), $("#scriptType").is(':checked'));
+				});
+				
+				// Action de la touche Entrer
+				$(document).keypress(function(e) {
+					if(e.which == 13) { main($("#inputField").val(), !$("#mode").is(':checked'), $("#scriptType").is(':checked'))};
+				});
+
+				// mise à jour de la vue (le champ input)
+				var updateResultField = function(res){ 
+					$("#inputField").val(res); 
+				}
+
+				// Magic Increment
+				var magicIncDec = function(inputValue, modeDecremental) {
+				
+					// Si la valeur d'entrée n'est pas un nombre (ou mal formattée) la fonction renvoie 0
+					if(isNaN(inputValue)) return updateResultField(0);
+
+					// Si la valeur d'entrée est 0 on incremente ou decremente de 0.1
+					if(inputValue == 0) return modeDecremental ? updateResultField(-0.1) : updateResultField(0.1);
+
+					// Conteur de la chaine de charactère
+					var i = 0;
+
+					// Coeficient pour les valeur négatives
+					var coefPosNeg = inputValue < 0 ? -1 : 1 ;
+
+					// Chaine de charactère correspondant à la valeur absolue du nombre en entrée
+					var inputString = Math.abs(inputValue).toString();
+
+					// On cherche le digit "cible" pou lui appliquer l'opération d'incrémentation ou décrementation
+					while(!inputString.charAt(i).match(/^[1-9]\d*$/)){i++;}
+					var res = modeDecremental ? parseInt(inputString.charAt(i)) * coefPosNeg - 1 : parseInt(inputString.charAt(i)) * coefPosNeg + 1;
+
+					// Si le digit après opération vaut zero, il passe à 0.9
+					if(res === 0) res = 0.9 * coefPosNeg;
+					res = i === 0 ? res * Math.pow(10, inputString.split(".")[0].length-1) : res * (1/Math.pow(10, i-1));
+
+					return(res)
+
+				}
+
+				// MAIN
+				var main = function (inputValue, modeDecremental, scriptType) {
+
+					if(scriptType){
+						var result = magicIncDec(parseFloat(inputValue), modeDecremental);
+						updateResultField(result) 
+
+					} else {
+				        $.get('MagicInc.php', {inputValue : inputValue, modeDecremental : modeDecremental}, function(result){ 
+				        	console.log(result);
+				        	// updateResultField(result) 
+				        });
+					}
+				};
+
+
+
+			})();
+
+		</script>
+	</body>
+
+</html>

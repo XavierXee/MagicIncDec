@@ -4,10 +4,9 @@
 
     	$i = 0;
     	$j = 0;
-    	$dotPosition = 0;
     	$val = floatval($inputValue);
-    	$modeDec = $modeDecremental === 'true'? true: false;;
-    	$troncatedInputFloat = 0;
+    	$modeDec = $modeDecremental === 'true' ? true : false;;
+    	$troncatedInput = 0;
     	$coefPosNeg = $val < 0 ? -1 : 1 ;
     	$inputString = strval(abs($val));
     	$inputValueStringArray = str_split($inputString);
@@ -17,13 +16,14 @@
 
 		for ($w = 0; $w < count($inputValueStringArray); $w++) {
 			if($inputValueStringArray[$w] === "."){
-				$dotPosition = $w;
 				$i++;
 			} else if(intval($inputValueStringArray[$w] < 1)) { 
 				$i++; 
-			} else {
-				$i = 0;
 			}
+		}
+
+		if($inputValueStringArray[0] != '0'){
+			$i = 0;
 		}
 
 		if($modeDec == true){
@@ -32,16 +32,17 @@
 			$res = intval($inputString[$i]) * $coefPosNeg + 1;
 		}
 
-		if($j == 0){
-			$troncatedInputFloat = floatval((str_split($inputValue)));
-		} else {
-			$troncatedInputFloat = floatval((str_split($inputValue, $j)));
+		if($res == 0) {
+			$res = 0.9 * $coefPosNeg;
 		}
-		
 
-		$res = $i == 0 ? $res * pow(10, $troncatedInputFloat) : $res * (1/pow(10, $i-1));
+		if($i == 0){
+			$j = pow(10, count($inputValueStringArray)-1);
+		} else {
+			$j = 1 / pow(10, $i - 1);
+		}
 
-		return $res;
+		return $res * $j;
 
     }
 

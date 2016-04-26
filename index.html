@@ -33,10 +33,10 @@
 							<div class="form-group">
 								<label for="scriptType">Script</label>
 								<div class="radio">
-									<label><input type="radio" id="scriptType" checked="checked" name="scriptType">JS</label>
+									<label><input type="radio" id="scriptType" name="scriptType">JS</label>
 								</div>
 								<div class="radio">
-									<label><input type="radio" name="scriptType">PHP</label>
+									<label><input type="radio" checked="checked" name="scriptType">PHP</label>
 								</div>
 							</div>
 						</form>
@@ -90,7 +90,7 @@
 					if(res === 0) res = 0.9 * coefPosNeg;
 					res = i === 0 ? res * Math.pow(10, inputString.split(".")[0].length-1) : res * (1/Math.pow(10, i-1));
 
-					return(res)
+					return(res);
 
 				}
 
@@ -103,8 +103,8 @@
 
 					} else {
 				        $.get('MagicInc.php', {inputValue : inputValue, modeDecremental : modeDecremental}, function(result){ 
-				        	console.log(result);
-				        	// updateResultField(result) 
+				        	console.log(result);	
+				        	updateResultField(result) 
 				        });
 					}
 				};
